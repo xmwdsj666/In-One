@@ -45,6 +45,12 @@
       this.applyQuery(this.query + this.row3[idx])
     },
 
+    // 点搜索框：展开键盘（联想列表同步出现）
+    onSearchTap() {
+      this.showKb = true
+      this.syncZones()
+    },
+
     // 键盘折叠切换
     onToggleKb() {
       this.showKb = !this.showKb
@@ -135,8 +141,8 @@
   <div class="page">
     <!-- 搜索视图 -->
     <div class="search-view" if="{{ view === 'search' }}">
-      <!-- 胶囊搜索框 -->
-      <div class="search-box">
+      <!-- 胶囊搜索框（点击拉起键盘） -->
+      <div class="search-box" onclick="onSearchTap">
         <image class="search-ico" src="../../assets/images/search.png" />
         <text class="search-text" if="{{ hasQuery }}">{{ query }}</text>
         <text class="search-ph" if="{{ showPh }}">请输入单词</text>
@@ -370,6 +376,7 @@
 .keyboard {
   @include flex(column, flex-start, flex-start);
   width: 350px;
+  margin-top: 40px;
 }
 .kb-row {
   @include flex(row, space-between, center);
