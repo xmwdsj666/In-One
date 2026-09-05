@@ -14,12 +14,10 @@
     }
   ],
   "deviceTypeList": [
-    "watch",
-    "watch-round",
     "watch-square"
   ],
   "config": {
-    "designWidth": 466
+    "designWidth": 390
   },
   "router": {
     "entry": "pages/Index",
