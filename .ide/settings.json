@@ -1,13 +1,13 @@
 {
-    "blue-os-previewer.device": "watch-square",
+    "blue-os-previewer.device": "watch-round",
     "blue-os-previewer.appMode": "app",
-    "blue-os-previewer.appUpdateMethod": 0,
+    "blue-os-previewer.appUpdateMethod": 1,
     "blue-os-previewer.resolution": {
         "watch-square": {
             "width": 390,
             "height": 450,
             "label": "390*450",
-            "selected": false,
+            "selected": true,
             "name": "390*450"
         },
         "watch-round": {
