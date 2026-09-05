@@ -74,6 +74,7 @@
         this.rows = []
         this.resultCount = 0
         this.hasResult = false
+        this.syncZones()
         return
       }
       const sug = dict.suggest(q, 30)
@@ -134,7 +135,7 @@
 <template>
   <div class="page">
     <!-- 搜索视图 -->
-    <div class="search-view" if="{{ view === 'search' }}">
+    <div if="{{ view === 'search' }}">
       <!-- 胶囊搜索框 -->
       <div class="search-box">
         <image class="search-ico" src="../../assets/images/search.png" />
@@ -145,55 +146,34 @@
         </div>
       </div>
 
-      <!-- 联想区：键盘展开态（列表让位给键盘） -->
-      <list class="zone zone-kb" if="{{ showZoneKb }}">
-        <list-item type="egg">
-          <div class="egg-card" if="{{ showEgg }}">
-            <text class="egg-main">In One 词典的作者 qwq 喵</text>
-            <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
-          </div>
-        </list-item>
-        <list-item type="cnt">
-          <div class="cnt-wrap" if="{{ hasResult }}">
-            <text class="result-count">找到 {{ resultCount }} 个结果</text>
-          </div>
-        </list-item>
-        <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
-          <div class="sug-item">
-            <text class="sug-word">{{ $item.w }}</text>
-            <text class="sug-def">{{ $item.d }}</text>
-          </div>
-        </list-item>
-      </list>
-
-      <!-- 联想区：键盘收起态（占满屏） -->
-      <list class="zone zone-full" if="{{ showZoneFull }}">
-        <list-item type="egg">
-          <div class="egg-card" if="{{ showEgg }}">
-            <text class="egg-main">In One 词典的作者 qwq 喵</text>
-            <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
-          </div>
-        </list-item>
-        <list-item type="cnt">
-          <div class="cnt-wrap" if="{{ hasResult }}">
-            <text class="result-count">找到 {{ resultCount }} 个结果</text>
-          </div>
-        </list-item>
-        <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
-          <div class="sug-item">
-            <text class="sug-word">{{ $item.w }}</text>
-            <text class="sug-def">{{ $item.d }}</text>
-          </div>
-        </list-item>
-      </list>
-
-      <!-- 键盘折叠切换条：展开态（钉在键盘上方） -->
-      <div class="kb-toggle toggle-kb" if="{{ showKb }}" onclick="onToggleKb">
-        <text class="kb-toggle-t">收起键盘</text>
+      <!-- 联想列表：键盘展开态（定高，让位给键盘） -->
+      <div class="result-block" if="{{ showZoneKb }}">
+        <div class="egg-card" if="{{ showEgg }}">
+          <text class="egg-main">In One 词典的作者 qwq 喵</text>
+          <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
+        </div>
+        <text class="result-count">找到 {{ resultCount }} 个结果</text>
+        <list class="rows-96">
+          <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
+            <div class="sug-item">
+              <text class="sug-word">{{ $item.w }}</text>
+              <text class="sug-def">{{ $item.d }}</text>
+            </div>
+          </list-item>
+        </list>
       </div>
-      <!-- 键盘折叠切换条：收起态（钉在屏底） -->
-      <div class="kb-toggle toggle-full" if="{{ showListZone }}" onclick="onToggleKb">
-        <text class="kb-toggle-t">展开键盘</text>
+
+      <!-- 联想列表：键盘收起态（占满屏） -->
+      <div class="result-block" if="{{ showZoneFull }}">
+        <text class="result-count">找到 {{ resultCount }} 个结果</text>
+        <list class="rows-296">
+          <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
+            <div class="sug-item">
+              <text class="sug-word">{{ $item.w }}</text>
+              <text class="sug-def">{{ $item.d }}</text>
+            </div>
+          </list-item>
+        </list>
       </div>
 
       <!-- 键盘折叠切换条 -->
@@ -208,13 +188,13 @@
             <text class="kb-t">{{ $item }}</text>
           </div>
         </div>
-        <div class="kb-row kb-row-mid">
-          <div class="kb-key kb-key-mid" for="{{ row2 }}" onclick="insertRow2($idx)">
+        <div class="kb-row">
+          <div class="kb-key" for="{{ row2 }}" onclick="insertRow2($idx)">
             <text class="kb-t">{{ $item }}</text>
           </div>
         </div>
-        <div class="kb-row kb-row-last">
-          <div class="kb-key kb-key-last" for="{{ row3 }}" onclick="insertRow3($idx)">
+        <div class="kb-row">
+          <div class="kb-key" for="{{ row3 }}" onclick="insertRow3($idx)">
             <text class="kb-t">{{ $item }}</text>
           </div>
         </div>
@@ -225,7 +205,7 @@
       </div>
     </div>
 
-    <!-- 详情视图：‹返回 + 金色词 + 音标 + 释义卡 -->
+    <!-- 详情视图：‹返回 + 金色词 + 音标 + 释义卡（scroll 定高） -->
     <scroll class="detail-view" if="{{ view === 'detail' }}" scroll-y="true">
       <div class="back-btn" onclick="goBack">
         <text class="back-t">‹ 返回</text>
@@ -252,25 +232,23 @@
 <style lang="scss">
 @import './../../assets/styles/style.scss';
 
-/* 布局：横向百分比（随屏缩放不裁切）+ 关键区域绝对定位钉底 */
+/* 布局纪律：全流式 + px 定高（绝对定位/百分比偏移/flex:1 均在该平台不可靠） */
 .page {
-  position: relative;
+  @include flex(column, flex-start, flex-start);
   width: 466px;
   height: 100%;
   background-color: $bg;
+  padding: 44px 20px 16px 20px;
 }
 
-/* 胶囊搜索框：顶部流式 */
 .search-box {
   @include flex(row, flex-start, center);
-  position: absolute;
-  top: 44px;
-  left: 20px;
-  right: 20px;
+  width: 426px;
   height: 52px;
   background-color: $card;
   border-radius: 26px;
   padding: 0 6px 0 18px;
+  margin-bottom: 10px;
 }
 .search-ico {
   width: 26px;
@@ -278,12 +256,12 @@
   margin-right: 10px;
 }
 .search-text {
-  flex: 1;
+  width: 250px;
   font-size: $fs-md;
   color: $ink;
 }
 .search-ph {
-  flex: 1;
+  width: 250px;
   font-size: $fs-sm;
   color: $sub;
 }
@@ -299,49 +277,13 @@
   color: $sub;
 }
 
-/* 联想区（绝对定位，键盘展开时让位、收起时占满） */
-.zone {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-}
-.zone-kb {
-  top: 106px;
-  height: 128px;
-}
-.zone-full {
-  top: 106px;
-  height: 314px;
-}
-.cnt-wrap {
-  padding: 4px 4px 8px 4px;
-}
-.sug-item {
-  @include flex(row, space-between, center);
-  width: 100%;
-  height: 60px;
-  background-color: $card;
-  border-radius: $radius-s;
-  margin-bottom: 8px;
-  padding: 0 18px;
-}
-.sug-word {
-  font-size: $fs-md;
-  font-weight: bold;
-  color: $ink;
-}
-.sug-def {
-  flex: 1;
-  font-size: $fs-xs;
-  color: $sub;
-  margin-left: 12px;
-  lines: 1;
-  text-overflow: ellipsis;
-  text-align: right;
+.result-block {
+  @include flex(column, flex-start, flex-start);
+  width: 426px;
 }
 .egg-card {
   @include flex(column, flex-start, flex-start);
-  width: 100%;
+  width: 426px;
   background-color: $card;
   border-radius: $radius-s;
   margin-bottom: 8px;
@@ -360,41 +302,68 @@
 .result-count {
   font-size: $fs-xs;
   color: $sub;
-  padding: 4px 4px 8px 4px;
+  padding: 2px 4px 8px 4px;
+}
+.rows-96 {
+  width: 426px;
+  height: 96px;
+}
+.rows-296 {
+  width: 426px;
+  height: 296px;
+}
+.sug-item {
+  @include flex(row, space-between, center);
+  width: 426px;
+  height: 60px;
+  background-color: $card;
+  border-radius: $radius-s;
+  margin-bottom: 8px;
+  padding: 0 18px;
+}
+.sug-word {
+  font-size: $fs-md;
+  font-weight: bold;
+  color: $ink;
+}
+.sug-def {
+  width: 190px;
+  font-size: $fs-xs;
+  color: $sub;
+  margin-left: 12px;
+  lines: 1;
+  text-overflow: ellipsis;
+  text-align: right;
 }
 
-/* 键盘（百分比键宽 + space-between 均分，随屏缩放永不溢出） */
+.kb-toggle {
+  @include flex(row, center, center);
+  width: 426px;
+  height: 30px;
+  margin: 4px 0;
+}
+.kb-toggle-t {
+  font-size: $fs-xs;
+  color: $sub;
+}
+
+/* 键盘：三行键数不同，用 margin-left 把每行推到居中位置 */
 .keyboard {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: 10px;
+  @include flex(column, flex-start, flex-start);
+  width: 426px;
 }
 .kb-row {
-  @include flex(row, space-between, center);
-  width: 100%;
-  margin-bottom: 4px;
+  @include flex(row, center, center);
+  width: 426px;
+  margin-bottom: 6px;
 }
 .kb-key {
   @include flex(row, center, center);
-  width: 8.8%;
+  width: 36px;
   height: 46px;
+  margin: 0 3px;
   background-color: $key;
   border-radius: $radius-s;
-}
-.kb-row-mid {
-  width: 92%;
-  margin-left: 4%;
-}
-.kb-key-mid {
-  width: 9.6%;
-}
-.kb-row-last {
-  width: 86%;
-  margin-left: 7%;
-}
-.kb-key-last {
-  width: 12%;
 }
 .kb-t {
   font-size: $fs-sm;
@@ -402,8 +371,9 @@
 }
 .fn-key {
   @include flex(row, center, center);
-  width: 26%;
-  height: 42px;
+  width: 184px;
+  height: 44px;
+  margin: 0 3px;
   background-color: $key;
   border-radius: $radius-s;
 }
@@ -412,32 +382,10 @@
   color: $ink;
 }
 
-/* 键盘折叠切换条（钉在键盘上方） */
-.kb-toggle {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  height: 30px;
-  @include flex(row, center, center);
-}
-.toggle-kb {
-  bottom: 198px;
-}
-.toggle-full {
-  bottom: 10px;
-}
-.kb-toggle-t {
-  font-size: $fs-xs;
-  color: $sub;
-}
-
-/* 详情视图 */
+/* 详情视图（scroll 定高） */
 .detail-view {
-  position: absolute;
-  top: 40px;
-  left: 20px;
-  right: 20px;
-  bottom: 16px;
+  width: 426px;
+  height: 380px;
 }
 .back-btn {
   @include flex(row, flex-start, center);
@@ -466,7 +414,7 @@
 }
 .card {
   @include flex(column, flex-start, flex-start);
-  width: 100%;
+  width: 426px;
   background-color: $card;
   border-radius: $radius;
   margin-top: 16px;
