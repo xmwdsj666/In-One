@@ -144,8 +144,9 @@
 </script>
 
 <template>
-  <!-- 搜索视图（分区绝对定位；键盘恒定贴底） -->
-  <div if="{{ searchView }}">
+  <div class="page">
+    <!-- 搜索视图（分区绝对定位；键盘恒定贴底） -->
+    <div if="{{ searchView }}">
     <!-- 胶囊搜索框 -->
     <div class="search-box">
       <image class="search-ico" src="../../assets/images/search.png" />
@@ -249,6 +250,7 @@
       <text class="sent-cn">{{ dSentCn }}</text>
     </div>
   </scroll>
+  </div>
 </template>
 
 <style lang="scss">
