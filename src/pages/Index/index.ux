@@ -16,6 +16,7 @@
       resultCount: 0,
       hasResult: false,
       showEgg: false, // 彩蛋：输入 qwq 触发
+      showKb: true, // 26 键键盘折叠态
       row1: ROW1,
       row2: ROW2,
       row3: ROW3,
@@ -42,6 +43,11 @@
       this.applyQuery(this.query + this.row3[idx])
     },
 
+    // 键盘折叠切换
+    onToggleKb() {
+      this.showKb = !this.showKb
+    },
+
     // 退格 / 清空
     onBackspace() {
       if (!this.query) return
@@ -62,7 +68,7 @@
         this.hasResult = false
         return
       }
-      const sug = dict.suggest(q, 10)
+      const sug = dict.suggest(q, 30)
       this.rows = sug.map(x => {
         const rec = dict.find(x.w)
         return { w: x.w, d: rec && rec.t && rec.t.length ? rec.t[0] : '' }
@@ -147,8 +153,13 @@
         </list>
       </div>
 
+      <!-- 键盘折叠切换条 -->
+      <div class="kb-toggle" onclick="onToggleKb">
+        <text class="kb-toggle-t">{{ showKb ? '收起键盘' : '展开键盘' }}</text>
+      </div>
+
       <!-- 26 键键盘 -->
-      <div class="keyboard">
+      <div class="keyboard" if="{{ showKb }}">
         <div class="kb-row">
           <div class="kb-key kb-w10" for="{{ row1 }}" onclick="insertRow1($idx)">
             <text class="kb-t">{{ $item }}</text>
@@ -304,6 +315,17 @@
   lines: 1;
   text-overflow: ellipsis;
   text-align: right;
+}
+
+.kb-toggle {
+  @include flex(row, center, center);
+  width: 340px;
+  height: 40px;
+  margin-top: 6px;
+}
+.kb-toggle-t {
+  font-size: $fs-xs;
+  color: $sub;
 }
 
 /* 键盘 */
