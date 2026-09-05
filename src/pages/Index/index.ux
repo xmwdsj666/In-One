@@ -147,14 +147,16 @@
 
       <!-- 联想区：键盘展开态（列表让位给键盘） -->
       <list class="zone zone-kb" if="{{ showZoneKb }}">
-        <list-item type="egg" if="{{ showEgg }}">
-          <div class="egg-card">
+        <list-item type="egg">
+          <div class="egg-card" if="{{ showEgg }}">
             <text class="egg-main">In One 词典的作者 qwq 喵</text>
             <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
           </div>
         </list-item>
         <list-item type="cnt">
-          <text class="result-count">找到 {{ resultCount }} 个结果</text>
+          <div class="cnt-wrap" if="{{ hasResult }}">
+            <text class="result-count">找到 {{ resultCount }} 个结果</text>
+          </div>
         </list-item>
         <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
           <div class="sug-item">
@@ -166,14 +168,16 @@
 
       <!-- 联想区：键盘收起态（占满屏） -->
       <list class="zone zone-full" if="{{ showZoneFull }}">
-        <list-item type="egg" if="{{ showEgg }}">
-          <div class="egg-card">
+        <list-item type="egg">
+          <div class="egg-card" if="{{ showEgg }}">
             <text class="egg-main">In One 词典的作者 qwq 喵</text>
             <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
           </div>
         </list-item>
         <list-item type="cnt">
-          <text class="result-count">找到 {{ resultCount }} 个结果</text>
+          <div class="cnt-wrap" if="{{ hasResult }}">
+            <text class="result-count">找到 {{ resultCount }} 个结果</text>
+          </div>
         </list-item>
         <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
           <div class="sug-item">
@@ -183,9 +187,13 @@
         </list-item>
       </list>
 
-      <!-- 键盘折叠切换条（常驻钉底上方） -->
-      <div class="kb-toggle" onclick="onToggleKb">
-        <text class="kb-toggle-t">{{ showKb ? '收起键盘' : '展开键盘' }}</text>
+      <!-- 键盘折叠切换条：展开态（钉在键盘上方） -->
+      <div class="kb-toggle toggle-kb" if="{{ showKb }}" onclick="onToggleKb">
+        <text class="kb-toggle-t">收起键盘</text>
+      </div>
+      <!-- 键盘折叠切换条：收起态（钉在屏底） -->
+      <div class="kb-toggle toggle-full" if="{{ showListZone }}" onclick="onToggleKb">
+        <text class="kb-toggle-t">展开键盘</text>
       </div>
 
       <!-- 键盘折叠切换条 -->
@@ -256,9 +264,9 @@
 .search-box {
   @include flex(row, flex-start, center);
   position: absolute;
-  top: 40px;
-  left: 4%;
-  right: 4%;
+  top: 44px;
+  left: 20px;
+  right: 20px;
   height: 52px;
   background-color: $card;
   border-radius: 26px;
@@ -294,16 +302,19 @@
 /* 联想区（绝对定位，键盘展开时让位、收起时占满） */
 .zone {
   position: absolute;
-  left: 4%;
-  right: 4%;
+  left: 20px;
+  right: 20px;
 }
 .zone-kb {
   top: 106px;
-  bottom: 262px;
+  height: 128px;
 }
 .zone-full {
   top: 106px;
-  bottom: 60px;
+  height: 314px;
+}
+.cnt-wrap {
+  padding: 4px 4px 8px 4px;
 }
 .sug-item {
   @include flex(row, space-between, center);
@@ -355,9 +366,9 @@
 /* 键盘（百分比键宽 + space-between 均分，随屏缩放永不溢出） */
 .keyboard {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: 58px;
+  left: 20px;
+  right: 20px;
+  bottom: 10px;
 }
 .kb-row {
   @include flex(row, space-between, center);
@@ -404,11 +415,16 @@
 /* 键盘折叠切换条（钉在键盘上方） */
 .kb-toggle {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: 264px;
+  left: 20px;
+  right: 20px;
   height: 30px;
   @include flex(row, center, center);
+}
+.toggle-kb {
+  bottom: 198px;
+}
+.toggle-full {
+  bottom: 10px;
 }
 .kb-toggle-t {
   font-size: $fs-xs;
@@ -419,8 +435,8 @@
 .detail-view {
   position: absolute;
   top: 40px;
-  left: 4%;
-  right: 4%;
+  left: 20px;
+  right: 20px;
   bottom: 16px;
 }
 .back-btn {
