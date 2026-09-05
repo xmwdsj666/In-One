@@ -361,9 +361,9 @@
 }
 .fn-key {
   @include flex(row, center, center);
-  width: 184px;
+  width: 30%;
   height: 44px;
-  margin: 0 3px;
+  margin: 0 1.5%;
   background-color: $key;
   border-radius: $radius-s;
 }
