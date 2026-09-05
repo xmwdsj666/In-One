@@ -61,9 +61,9 @@ console.log('[index] attention 联想:', Page.rows.slice(0, 3).map(x => x.w).joi
 Page.applyQuery('a')
 console.log('[index] a 联想数:', Page.resultCount, '(上限 30)')
 Page.onToggleKb()
-console.log('[index] 收起键盘 showKb:', Page.showKb, '(期望 false)')
+console.log('[index] 收起键盘 showKb:', Page.showKb, '| showToggleFull:', Page.showToggleFull, '| showToggleKb:', Page.showToggleKb)
 Page.onToggleKb()
-console.log('[index] 展开键盘 showKb:', Page.showKb, '(期望 true)')
+console.log('[index] 展开键盘 showKb:', Page.showKb, '| showToggleFull:', Page.showToggleFull, '(期望 false)')
 
 // 2) 行点击 -> 详情视图
 Page.onRowTap(0)
