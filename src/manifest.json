@@ -1,0 +1,35 @@
+{
+  "package": "com.inone.watch",
+  "name": "In One",
+  "versionName": "1.1.0",
+  "versionCode": 3,
+  "appCategory": [
+    "book",
+    "education"
+  ],
+  "icon": "/assets/images/logo.png",
+  "features": [
+    {
+      "name": "blueos.app.appmanager.router"
+    }
+  ],
+  "deviceTypeList": [
+    "watch",
+    "watch-round",
+    "watch-square"
+  ],
+  "config": {
+    "designWidth": 466
+  },
+  "router": {
+    "entry": "pages/Index",
+    "pages": {
+      "pages/Index": {
+        "component": "index"
+      }
+    }
+  },
+  "display": {
+    "backgroundColor": "#000000"
+  }
+}

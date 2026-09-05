@@ -1,0 +1,6 @@
+<script>
+  // 极简词典无全局状态；app.ux 仅为快应用工程必需入口
+  export default {
+    onCreate() {},
+  }
+</script>

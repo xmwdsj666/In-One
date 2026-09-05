@@ -1,0 +1,393 @@
+<script>
+  import dict from '../../common/dict.js'
+
+  // QWERTY 三行（每行键数不同，按行渲染）
+  const ROW1 = 'qwertyuiop'.split('')
+  const ROW2 = 'asdfghjkl'.split('')
+  const ROW3 = 'zxcvbnm'.split('')
+
+  export default {
+    data: {
+      view: 'search', // search 搜索 | detail 详情（单页双视图，返回保留搜索状态）
+      query: '',
+      hasQuery: false,
+      showPh: true,
+      rows: [], // 联想结果 [{w,l,d}]
+      resultCount: 0,
+      hasResult: false,
+      row1: ROW1,
+      row2: ROW2,
+      row3: ROW3,
+      // 详情视图字段（onOpenDetail 预处理，模板只做字段直绑）
+      dHead: '',
+      dPhone: '',
+      dTags: '',
+      dDefs: '',
+      dPhrases: '',
+      dHasPhrase: false,
+      dSentEn: '',
+      dSentCn: '',
+      dHasSent: false,
+    },
+
+    // 点字母键：插入并联想（$idx 为行内下标）
+    insertRow1(idx) {
+      this.applyQuery(this.query + this.row1[idx])
+    },
+    insertRow2(idx) {
+      this.applyQuery(this.query + this.row2[idx])
+    },
+    insertRow3(idx) {
+      this.applyQuery(this.query + this.row3[idx])
+    },
+
+    // 退格 / 清空
+    onBackspace() {
+      if (!this.query) return
+      this.applyQuery(this.query.slice(0, -1))
+    },
+    onClear() {
+      this.applyQuery('')
+    },
+
+    applyQuery(q) {
+      this.query = q
+      this.hasQuery = !!q
+      this.showPh = !q
+      if (!/^[a-z]/.test(q)) {
+        this.rows = []
+        this.resultCount = 0
+        this.hasResult = false
+        return
+      }
+      const sug = dict.suggest(q, 10)
+      this.rows = sug.map(x => {
+        const rec = dict.find(x.w)
+        return { w: x.w, d: rec && rec.t && rec.t.length ? rec.t[0] : '' }
+      })
+      this.resultCount = this.rows.length
+      this.hasResult = true
+    },
+
+    // 联想行点击（$idx 下标取行）→ 打开详情视图
+    onRowTap(idx) {
+      const r = this.rows[idx]
+      if (!r) return
+      this.openDetail(r.w)
+    },
+
+    openDetail(word) {
+      const rec = dict.find(word)
+      if (!rec) {
+        this.dHead = word
+        this.dPhone = ''
+        this.dTags = ''
+        this.dDefs = ''
+        this.dPhrases = ''
+        this.dHasPhrase = false
+        this.dSentEn = ''
+        this.dSentCn = ''
+        this.dHasSent = false
+      } else {
+        this.dHead = rec.a || rec.w
+        this.dPhone = rec.p ? '/' + rec.p + '/' : ''
+        this.dTags = (rec.l || '').split('').map(t => dict.tagName(t)).join(' · ')
+        this.dDefs = (rec.t || []).join('\n')
+        this.dPhrases = (rec.ph || []).map(x => {
+          const i = x.indexOf('|')
+          return x.slice(0, i) + '\n' + x.slice(i + 1)
+        }).join('\n')
+        this.dHasPhrase = !!this.dPhrases
+        const s = rec.s || ''
+        const si = s.indexOf('|')
+        this.dSentEn = si === -1 ? s : s.slice(0, si)
+        this.dSentCn = si === -1 ? '' : s.slice(si + 1)
+        this.dHasSent = !!this.dSentEn
+      }
+      this.view = 'detail'
+    },
+
+    // 详情返回搜索态（保留 query 与联想结果）
+    goBack() {
+      this.view = 'search'
+    },
+  }
+</script>
+
+<template>
+  <div class="page">
+    <!-- 搜索视图 -->
+    <div class="search-view" if="{{ view === 'search' }}">
+      <!-- 胶囊搜索框 -->
+      <div class="search-box">
+        <image class="search-ico" src="../../assets/images/search.png" />
+        <text class="search-text" if="{{ hasQuery }}">{{ query }}</text>
+        <text class="search-ph" if="{{ showPh }}">请输入单词</text>
+        <div class="clear-btn" if="{{ hasQuery }}" onclick="onClear">
+          <text class="clear-t">×</text>
+        </div>
+      </div>
+
+      <!-- 联想区 -->
+      <div class="result-zone" if="{{ hasResult }}">
+        <text class="result-count">找到 {{ resultCount }} 个结果</text>
+        <list class="rows">
+          <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
+            <div class="sug-item">
+              <text class="sug-word">{{ $item.w }}</text>
+              <text class="sug-def">{{ $item.d }}</text>
+            </div>
+          </list-item>
+        </list>
+      </div>
+
+      <!-- 26 键键盘 -->
+      <div class="keyboard">
+        <div class="kb-row">
+          <div class="kb-key kb-w10" for="{{ row1 }}" onclick="insertRow1($idx)">
+            <text class="kb-t">{{ $item }}</text>
+          </div>
+        </div>
+        <div class="kb-row kb-mid">
+          <div class="kb-key kb-w9" for="{{ row2 }}" onclick="insertRow2($idx)">
+            <text class="kb-t">{{ $item }}</text>
+          </div>
+        </div>
+        <div class="kb-row">
+          <div class="kb-key kb-w7" for="{{ row3 }}" onclick="insertRow3($idx)">
+            <text class="kb-t">{{ $item }}</text>
+          </div>
+        </div>
+        <div class="kb-row">
+          <div class="fn-key" onclick="onBackspace"><text class="fn-t">退格</text></div>
+          <div class="fn-key" onclick="onClear"><text class="fn-t">清空</text></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 详情视图：‹返回 + 金色词 + 音标 + 释义卡 -->
+    <scroll class="detail-view" if="{{ view === 'detail' }}" scroll-y="true">
+      <div class="back-btn" onclick="goBack">
+        <text class="back-t">‹ 返回</text>
+      </div>
+      <text class="head">{{ dHead }}</text>
+      <text class="phone">{{ dPhone }}</text>
+      <text class="tags" if="{{ dTags }}">{{ dTags }}</text>
+      <div class="card">
+        <text class="defs">{{ dDefs }}</text>
+      </div>
+      <div class="card" if="{{ dHasPhrase }}">
+        <text class="sec-title">短语</text>
+        <text class="phrase">{{ dPhrases }}</text>
+      </div>
+      <div class="card" if="{{ dHasSent }}">
+        <text class="sec-title">例句</text>
+        <text class="sent-en">{{ dSentEn }}</text>
+        <text class="sent-cn">{{ dSentCn }}</text>
+      </div>
+    </scroll>
+  </div>
+</template>
+
+<style lang="scss">
+@import './../../assets/styles/style.scss';
+
+.page {
+  @include flex(column, flex-start, center);
+  width: 466px;
+  height: 100%;
+  background-color: $bg;
+  padding: 24px 30px 14px 30px;
+}
+
+/* 搜索视图容器（条件渲染容器必须有布局约束） */
+.search-view {
+  @include flex(column, flex-start, center);
+  width: 406px;
+  flex: 1;
+}
+
+.search-box {
+  @include flex(row, flex-start, center);
+  width: 406px;
+  height: 60px;
+  background-color: $card;
+  border-radius: 30px;
+  padding: 0 8px 0 20px;
+}
+.search-ico {
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+}
+.search-text {
+  flex: 1;
+  font-size: $fs-md;
+  color: $ink;
+}
+.search-ph {
+  flex: 1;
+  font-size: $fs-sm;
+  color: $sub;
+}
+.clear-btn {
+  @include flex(row, center, center);
+  width: 46px;
+  height: 46px;
+  border-radius: 23px;
+  background-color: $key;
+}
+.clear-t {
+  font-size: $fs-md;
+  color: $sub;
+}
+
+.result-zone {
+  @include flex(column, flex-start, flex-start);
+  width: 406px;
+  flex: 1;
+  margin-top: 14px;
+}
+.result-count {
+  font-size: $fs-xs;
+  color: $sub;
+}
+.rows {
+  width: 406px;
+  flex: 1;
+  margin-top: 8px;
+}
+.sug-item {
+  @include flex(row, space-between, center);
+  width: 406px;
+  height: 66px;
+  background-color: $card;
+  border-radius: $radius-s;
+  margin-bottom: 8px;
+  padding: 0 20px;
+}
+.sug-word {
+  font-size: $fs-md;
+  font-weight: bold;
+  color: $ink;
+}
+.sug-def {
+  flex: 1;
+  font-size: $fs-xs;
+  color: $sub;
+  margin-left: 14px;
+  lines: 1;
+  text-overflow: ellipsis;
+  text-align: right;
+}
+
+/* 键盘 */
+.keyboard {
+  @include flex(column, center, center);
+  width: 406px;
+  margin-top: 10px;
+}
+.kb-row {
+  @include flex(row, center, center);
+  width: 406px;
+  margin-bottom: 8px;
+}
+.kb-mid {
+  padding: 0 18px;
+}
+.kb-key {
+  @include flex(row, center, center);
+  height: 56px;
+  margin: 0 3px;
+  background-color: $key;
+  border-radius: $radius-s;
+}
+.kb-w10 {
+  width: 34px;
+}
+.kb-w9 {
+  width: 39px;
+}
+.kb-w7 {
+  width: 51px;
+}
+.kb-t {
+  font-size: $fs-md;
+  color: $ink;
+}
+.fn-key {
+  @include flex(row, center, center);
+  width: 140px;
+  height: 50px;
+  margin: 0 3px;
+  background-color: $key;
+  border-radius: $radius-s;
+}
+.fn-t {
+  font-size: $fs-md;
+  color: $ink;
+}
+
+/* 详情视图容器 */
+.detail-view {
+  width: 406px;
+  flex: 1;
+}
+.back-btn {
+  @include flex(row, flex-start, center);
+  height: 48px;
+}
+.back-t {
+  font-size: $fs-sm;
+  color: $ink;
+  font-weight: bold;
+}
+.head {
+  font-size: $fs-xl;
+  font-weight: bold;
+  color: $gold;
+  margin-top: 8px;
+}
+.phone {
+  font-size: $fs-sm;
+  color: $sub;
+  margin-top: 6px;
+}
+.tags {
+  font-size: $fs-xs;
+  color: $sub;
+  margin-top: 8px;
+}
+.card {
+  @include flex(column, flex-start, flex-start);
+  width: 406px;
+  background-color: $card;
+  border-radius: $radius;
+  margin-top: 16px;
+  padding: 20px 24px;
+}
+.sec-title {
+  font-size: $fs-xs;
+  color: $sub;
+  margin-bottom: 8px;
+}
+.defs {
+  font-size: $fs-md;
+  color: $ink;
+  lines: 8;
+}
+.phrase {
+  font-size: $fs-sm;
+  color: $ink;
+  lines: 4;
+}
+.sent-en {
+  font-size: $fs-sm;
+  color: $ink;
+}
+.sent-cn {
+  font-size: $fs-xs;
+  color: $sub;
+  margin-top: 8px;
+}
+</style>

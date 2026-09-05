@@ -1,0 +1,19 @@
+// 暗色主题 tokens（designWidth 466，px 随屏等比缩放）
+$bg: #000000;      // 页面背景（纯黑）
+$card: #1c1c1e;    // 卡片/键帽（iOS 暗色 systemGray6）
+$key: #2c2c2e;     // 键帽
+$key-press: #48484a;
+$sub: #8e8e93;     // 次级文字（iOS 暗色 systemGray）
+$ink: #ffffff;     // 主文字
+$gold: #e7c447;    // 详情页单词（参考图金黄色）
+$blue: #0a84ff;    // 暗色系统蓝（搜索图标）
+
+// 字号阶
+$fs-xl: 52px;  // 详情页大词
+$fs-lg: 40px;
+$fs-md: 32px;  // 正文
+$fs-sm: 26px;  // 次级/音标
+$fs-xs: 22px;  // 辅助
+
+$radius: 24px;   // 卡片圆角
+$radius-s: 14px; // 键帽圆角

@@ -1,0 +1,20 @@
+{
+  "name": "blueos-dict",
+  "version": "1.0.0",
+  "packageManager": "pnpm@^9.9.0",
+  "description": "BlueOS Watch English Dictionary for High School Students",
+  "scripts": {
+    "gen": "node ./scripts/gen/index.js"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "semi": false,
+    "printWidth": 80,
+    "proseWrap": "never",
+    "tabWidth": 2,
+    "bracketSameLine": true,
+    "htmlWhitespaceSensitivity": "ignore",
+    "vueIndentScriptAndStyle": true,
+    "trailingComma": "es5"
+  }
+}
