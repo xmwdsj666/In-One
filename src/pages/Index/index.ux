@@ -28,6 +28,12 @@
       dSentEn: '',
       dSentCn: '',
       dHasSent: false,
+      pageCls: 'page', // 圆表时由 onInit 置为 'page page-round'
+    },
+
+    onInit() {
+      // $device 为文档全局对象（非 Feature API），可安全同步读取
+      if ($device.deviceType === 'watch-round') this.pageCls = 'page page-round'
     },
 
     // 点字母键：插入并联想（$idx 为行内下标）
@@ -115,7 +121,7 @@
 </script>
 
 <template>
-  <div class="page">
+  <div class="{{ pageCls }}">
     <!-- 搜索视图 -->
     <div class="search-view" if="{{ view === 'search' }}">
       <!-- 胶囊搜索框 -->
@@ -148,7 +154,7 @@
             <text class="kb-t">{{ $item }}</text>
           </div>
         </div>
-        <div class="kb-row kb-mid">
+        <div class="kb-row">
           <div class="kb-key kb-w9" for="{{ row2 }}" onclick="insertRow2($idx)">
             <text class="kb-t">{{ $item }}</text>
           </div>
@@ -292,9 +298,6 @@
   width: 406px;
   margin-bottom: 8px;
 }
-.kb-mid {
-  padding: 0 18px;
-}
 .kb-key {
   @include flex(row, center, center);
   height: 56px;
@@ -390,4 +393,63 @@
   color: $sub;
   margin-top: 8px;
 }
+
+/* 圆表适配：$device 判定 + pageCls 字段切换（media query 会被编译器拍平，不可用） */
+.page-round {
+  padding: 64px 40px 40px 40px;
+}
+.page-round .search-view {
+  width: 340px;
+}
+.page-round .search-box {
+  width: 340px;
+  height: 56px;
+}
+.page-round .result-zone {
+  width: 340px;
+  margin-top: 10px;
+}
+.page-round .rows {
+  width: 340px;
+}
+.page-round .sug-item {
+  width: 340px;
+  height: 60px;
+}
+.page-round .keyboard {
+  width: 360px;
+  margin-top: 6px;
+}
+.page-round .kb-row {
+  width: 360px;
+  margin-bottom: 5px;
+}
+.page-round .kb-key {
+  height: 50px;
+}
+.page-round .kb-w10 {
+  width: 30px;
+}
+.page-round .kb-w9 {
+  width: 34px;
+}
+.page-round .kb-w7 {
+  width: 44px;
+}
+.page-round .fn-key {
+  width: 120px;
+  height: 46px;
+}
+.page-round .detail-view {
+  width: 340px;
+  padding-bottom: 40px;
+}
+.page-round .back-btn {
+  justify-content: center;
+}
+.page-round .card {
+  width: 340px;
+  align-self: center;
+}
+</style>
 </style>
