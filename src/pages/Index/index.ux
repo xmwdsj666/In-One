@@ -15,6 +15,7 @@
       rows: [], // 联想结果 [{w,l,d}]
       resultCount: 0,
       hasResult: false,
+      showEgg: false, // 彩蛋：输入 qwq 触发
       row1: ROW1,
       row2: ROW2,
       row3: ROW3,
@@ -54,6 +55,7 @@
       this.query = q
       this.hasQuery = !!q
       this.showPh = !q
+      this.showEgg = q === 'qwq'
       if (!/^[a-z]/.test(q)) {
         this.rows = []
         this.resultCount = 0
@@ -130,6 +132,10 @@
 
       <!-- 联想区 -->
       <div class="result-zone" if="{{ hasResult }}">
+        <div class="egg-card" if="{{ showEgg }}">
+          <text class="egg-main">In One 词典的作者 qwq 喵</text>
+          <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
+        </div>
         <text class="result-count">找到 {{ resultCount }} 个结果</text>
         <list class="rows">
           <list-item type="sug" for="{{ rows }}" onclick="onRowTap($idx)">
@@ -249,6 +255,24 @@
   flex: 1;
   margin-top: 10px;
 }
+.egg-card {
+  @include flex(column, flex-start, flex-start);
+  width: 340px;
+  background-color: $card;
+  border-radius: $radius-s;
+  margin-bottom: 8px;
+  padding: 12px 18px;
+}
+.egg-main {
+  font-size: $fs-sm;
+  font-weight: bold;
+  color: $gold;
+}
+.egg-sub {
+  font-size: $fs-xs;
+  color: $sub;
+  margin-top: 4px;
+}
 .result-count {
   font-size: $fs-xs;
   color: $sub;
@@ -285,12 +309,12 @@
 /* 键盘 */
 .keyboard {
   @include flex(column, center, center);
-  width: 360px;
+  width: 340px;
   margin-top: 8px;
 }
 .kb-row {
   @include flex(row, center, center);
-  width: 360px;
+  width: 340px;
   margin-bottom: 5px;
 }
 .kb-key {
@@ -301,13 +325,13 @@
   border-radius: $radius-s;
 }
 .kb-w10 {
-  width: 30px;
+  width: 28px;
 }
 .kb-w9 {
-  width: 34px;
+  width: 31px;
 }
 .kb-w7 {
-  width: 44px;
+  width: 42px;
 }
 .kb-t {
   font-size: $fs-sm;
