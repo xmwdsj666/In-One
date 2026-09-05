@@ -137,7 +137,7 @@
       </div>
 
       <!-- 联想区 -->
-      <div class="result-zone" if="{{ hasResult }}">
+      <div class="result-zone">
         <div class="egg-card" if="{{ showEgg }}">
           <text class="egg-main">In One 词典的作者 qwq 喵</text>
           <text class="egg-sub">被你发现了，喵~ 谢谢使用 In One</text>
@@ -215,19 +215,19 @@
   width: 466px;
   height: 100%;
   background-color: $bg;
-  padding: 56px 40px 36px 40px;
+  padding: 44px 24px 16px 24px;
 }
 
 /* 搜索视图容器（条件渲染容器必须有布局约束） */
 .search-view {
   @include flex(column, flex-start, center);
-  width: 340px;
+  width: 418px;
   flex: 1;
 }
 
 .search-box {
   @include flex(row, flex-start, center);
-  width: 340px;
+  width: 380px;
   height: 52px;
   background-color: $card;
   border-radius: 26px;
@@ -262,13 +262,13 @@
 
 .result-zone {
   @include flex(column, flex-start, flex-start);
-  width: 340px;
+  width: 418px;
   flex: 1;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 .egg-card {
   @include flex(column, flex-start, flex-start);
-  width: 340px;
+  width: 418px;
   background-color: $card;
   border-radius: $radius-s;
   margin-bottom: 8px;
@@ -289,13 +289,13 @@
   color: $sub;
 }
 .rows {
-  width: 340px;
+  width: 418px;
   flex: 1;
   margin-top: 8px;
 }
 .sug-item {
   @include flex(row, space-between, center);
-  width: 340px;
+  width: 418px;
   height: 60px;
   background-color: $card;
   border-radius: $radius-s;
@@ -319,9 +319,9 @@
 
 .kb-toggle {
   @include flex(row, center, center);
-  width: 340px;
-  height: 40px;
-  margin-top: 6px;
+  width: 380px;
+  height: 34px;
+  margin-top: 2px;
 }
 .kb-toggle-t {
   font-size: $fs-xs;
@@ -331,8 +331,8 @@
 /* 键盘 */
 .keyboard {
   @include flex(column, center, center);
-  width: 340px;
-  margin-top: 8px;
+  width: 380px;
+  margin-top: 4px;
 }
 .kb-row {
   @include flex(row, center, center);
@@ -347,13 +347,13 @@
   border-radius: $radius-s;
 }
 .kb-w10 {
-  width: 28px;
+  width: 32px;
 }
 .kb-w9 {
-  width: 31px;
+  width: 36px;
 }
 .kb-w7 {
-  width: 42px;
+  width: 48px;
 }
 .kb-t {
   font-size: $fs-sm;
@@ -361,7 +361,7 @@
 }
 .fn-key {
   @include flex(row, center, center);
-  width: 110px;
+  width: 184px;
   height: 44px;
   margin: 0 3px;
   background-color: $key;
@@ -374,7 +374,7 @@
 
 /* 详情视图容器 */
 .detail-view {
-  width: 340px;
+  width: 418px;
   flex: 1;
 }
 .back-btn {
@@ -404,7 +404,7 @@
 }
 .card {
   @include flex(column, flex-start, flex-start);
-  width: 340px;
+  width: 418px;
   background-color: $card;
   border-radius: $radius;
   margin-top: 16px;
