@@ -18,7 +18,7 @@
       row1: ROW1,
       row2: ROW2,
       row3: ROW3,
-      // 详情视图字段（onOpenDetail 预处理，模板只做字段直绑）
+      // 详情视图字段（openDetail 预处理，模板只做字段直绑）
       dHead: '',
       dPhone: '',
       dTags: '',
@@ -28,12 +28,6 @@
       dSentEn: '',
       dSentCn: '',
       dHasSent: false,
-      pageCls: 'page', // 圆表时由 onInit 置为 'page page-round'
-    },
-
-    onInit() {
-      // $device 为文档全局对象（非 Feature API），可安全同步读取
-      if ($device.deviceType === 'watch-round') this.pageCls = 'page page-round'
     },
 
     // 点字母键：插入并联想（$idx 为行内下标）
@@ -121,7 +115,7 @@
 </script>
 
 <template>
-  <div class="{{ pageCls }}">
+  <div class="page">
     <!-- 搜索视图 -->
     <div class="search-view" if="{{ view === 'search' }}">
       <!-- 胶囊搜索框 -->
@@ -198,33 +192,34 @@
 <style lang="scss">
 @import './../../assets/styles/style.scss';
 
+/* 布局为圆/方双形态安全值：340 内容区 + 360 键盘 + 顶部 56 / 底部 36 圆弧内缩 */
 .page {
   @include flex(column, flex-start, center);
   width: 466px;
   height: 100%;
   background-color: $bg;
-  padding: 24px 30px 14px 30px;
+  padding: 56px 40px 36px 40px;
 }
 
 /* 搜索视图容器（条件渲染容器必须有布局约束） */
 .search-view {
   @include flex(column, flex-start, center);
-  width: 406px;
+  width: 340px;
   flex: 1;
 }
 
 .search-box {
   @include flex(row, flex-start, center);
-  width: 406px;
-  height: 60px;
+  width: 340px;
+  height: 52px;
   background-color: $card;
-  border-radius: 30px;
-  padding: 0 8px 0 20px;
+  border-radius: 26px;
+  padding: 0 6px 0 18px;
 }
 .search-ico {
-  width: 28px;
-  height: 28px;
-  margin-right: 12px;
+  width: 26px;
+  height: 26px;
+  margin-right: 10px;
 }
 .search-text {
   flex: 1;
@@ -238,9 +233,9 @@
 }
 .clear-btn {
   @include flex(row, center, center);
-  width: 46px;
-  height: 46px;
-  border-radius: 23px;
+  width: 42px;
+  height: 42px;
+  border-radius: 21px;
   background-color: $key;
 }
 .clear-t {
@@ -250,27 +245,27 @@
 
 .result-zone {
   @include flex(column, flex-start, flex-start);
-  width: 406px;
+  width: 340px;
   flex: 1;
-  margin-top: 14px;
+  margin-top: 10px;
 }
 .result-count {
   font-size: $fs-xs;
   color: $sub;
 }
 .rows {
-  width: 406px;
+  width: 340px;
   flex: 1;
   margin-top: 8px;
 }
 .sug-item {
   @include flex(row, space-between, center);
-  width: 406px;
-  height: 66px;
+  width: 340px;
+  height: 60px;
   background-color: $card;
   border-radius: $radius-s;
   margin-bottom: 8px;
-  padding: 0 20px;
+  padding: 0 18px;
 }
 .sug-word {
   font-size: $fs-md;
@@ -281,7 +276,7 @@
   flex: 1;
   font-size: $fs-xs;
   color: $sub;
-  margin-left: 14px;
+  margin-left: 12px;
   lines: 1;
   text-overflow: ellipsis;
   text-align: right;
@@ -290,50 +285,50 @@
 /* 键盘 */
 .keyboard {
   @include flex(column, center, center);
-  width: 406px;
-  margin-top: 10px;
+  width: 360px;
+  margin-top: 8px;
 }
 .kb-row {
   @include flex(row, center, center);
-  width: 406px;
-  margin-bottom: 8px;
+  width: 360px;
+  margin-bottom: 5px;
 }
 .kb-key {
   @include flex(row, center, center);
-  height: 56px;
+  height: 46px;
   margin: 0 3px;
   background-color: $key;
   border-radius: $radius-s;
 }
 .kb-w10 {
-  width: 34px;
+  width: 30px;
 }
 .kb-w9 {
-  width: 39px;
+  width: 34px;
 }
 .kb-w7 {
-  width: 51px;
+  width: 44px;
 }
 .kb-t {
-  font-size: $fs-md;
+  font-size: $fs-sm;
   color: $ink;
 }
 .fn-key {
   @include flex(row, center, center);
-  width: 140px;
-  height: 50px;
+  width: 110px;
+  height: 44px;
   margin: 0 3px;
   background-color: $key;
   border-radius: $radius-s;
 }
 .fn-t {
-  font-size: $fs-md;
+  font-size: $fs-sm;
   color: $ink;
 }
 
 /* 详情视图容器 */
 .detail-view {
-  width: 406px;
+  width: 340px;
   flex: 1;
 }
 .back-btn {
@@ -363,11 +358,11 @@
 }
 .card {
   @include flex(column, flex-start, flex-start);
-  width: 406px;
+  width: 340px;
   background-color: $card;
   border-radius: $radius;
   margin-top: 16px;
-  padding: 20px 24px;
+  padding: 18px 22px;
 }
 .sec-title {
   font-size: $fs-xs;
@@ -393,63 +388,4 @@
   color: $sub;
   margin-top: 8px;
 }
-
-/* 圆表适配：$device 判定 + pageCls 字段切换（media query 会被编译器拍平，不可用） */
-.page-round {
-  padding: 64px 40px 40px 40px;
-}
-.page-round .search-view {
-  width: 340px;
-}
-.page-round .search-box {
-  width: 340px;
-  height: 56px;
-}
-.page-round .result-zone {
-  width: 340px;
-  margin-top: 10px;
-}
-.page-round .rows {
-  width: 340px;
-}
-.page-round .sug-item {
-  width: 340px;
-  height: 60px;
-}
-.page-round .keyboard {
-  width: 360px;
-  margin-top: 6px;
-}
-.page-round .kb-row {
-  width: 360px;
-  margin-bottom: 5px;
-}
-.page-round .kb-key {
-  height: 50px;
-}
-.page-round .kb-w10 {
-  width: 30px;
-}
-.page-round .kb-w9 {
-  width: 34px;
-}
-.page-round .kb-w7 {
-  width: 44px;
-}
-.page-round .fn-key {
-  width: 120px;
-  height: 46px;
-}
-.page-round .detail-view {
-  width: 340px;
-  padding-bottom: 40px;
-}
-.page-round .back-btn {
-  justify-content: center;
-}
-.page-round .card {
-  width: 340px;
-  align-self: center;
-}
-</style>
 </style>

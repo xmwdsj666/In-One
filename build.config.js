@@ -4,4 +4,7 @@
  */
 module.exports = {
   assetsInclude: ['assets', 'assets-watch', 'assets-watch-round'],
+  css: {
+    postcss: './postcss.config.js',
+  },
 }
